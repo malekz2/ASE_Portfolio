@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div id="star-container"></div>
+
+<style>
+    body {
+        background-color: #0f0c29;
+        background-image: linear-gradient(315deg, #0f0c29 0%, #302b63 74%, #24243e 100%);
+        min-height: 100vh;
+    }
+    /* Hide the default white page-wrapper background from style.css just for this page */
+    .page-wrapper {
+        background-color: transparent !important;
+        box-shadow: none !important;
+    }
+    /* Update nav links to be visible on dark background */
+    .navbar li a {
+        color: rgba(255,255,255,0.8) !important;
+    }
+    .navbar li.active a {
+        color: #fff !important;
+    }
+</style>
+
+<div class="centered-justified">
+    <div class="glass-panel">
+        <h1>About Me</h1>
+        <p>
+            Welcome to the cosmos. This page is powered by vanilla JavaScript
+            simulating the React "ShootingStars" component logic.
+        </p>
+        <br>
+        <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+            Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.
+        </p>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='stars.js') }}"></script>
+
+{% endblock %}

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASE Portfolio</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        .js-line {
+            fill: none;
+            stroke: #ffffff;
+            stroke-width: 1;
+        }
+        .pointer-dot {
+            position: absolute;
+            width: 0.5rem;
+            height: 0.5rem;
+            background: #ffffff;
+            border-radius: 50%;
+            will-change: transform;
+            /* Start hidden until mouse moves */
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="wave-background-container">
+        <svg id="wave-svg" style="display: block; width: 100%; height: 100%;" xmlns="http://www.w3.org/2000/svg"></svg>
+        <div id="pointer-dot" class="pointer-dot"></div>
+    </div>
+
+    <div class="page-wrapper">
+        <header>
+            <h1><b>ASE Flask Portfolio</b></h1>
+            <h3>This page highlights my work in ASE class</h3>
+            <nav>
+                <ul class="navbar">
+                    <li class="{% if request.path == url_for('home') %}active{% endif %}">
+                        <a href="{{ url_for('home') }}">Home</a>
+                    </li>
+                    <li class="{% if request.path == url_for('home') %}active{% endif %}">
+                        <a href="{{ url_for('about') }}">About</a>
+                    </li>
+                    <li class="{% if request.path == url_for('home') %}active{% endif %}">
+                        <a href="{{ url_for('projects') }}">Projects</a>
+                    </li>
+                    <li class="{% if request.path == url_for('rectangle') %}active{% endif %}">
+                        <a href="{{ url_for('rectangle') }}">Rectangle</a>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+        <main>
+            {% block content %}
+            {% endblock %}
+        </main>
+    </div>
+
+    <script type="module">
+    import { createNoise2D } from 'https://cdn.jsdelivr.net/npm/simplex-noise@4.0.0/+esm';
+
+    const container = document.getElementById('wave-background-container');
+    const svg = document.getElementById('wave-svg');
+    const pointerDot = document.getElementById('pointer-dot');
+
+    let noise2D;
+    let lines = [];
+    let paths = [];
+    let width, height;
+
+    let projectiles = [];
+
+    // Mouse state
+    const mouse = {
+        x: -10, y: 0,
+        lx: 0, ly: 0,
+        sx: 0, sy: 0,
+        v: 0, vs: 0,
+        a: 0,
+        set: false
+    };
+
+    function init() {
+        noise2D = createNoise2D();
+        setSize();
+        setLines();
+
+        window.addEventListener('resize', onResize);
+        window.addEventListener('mousemove', onMouseMove);
+        container.addEventListener('touchmove', onTouchMove, { passive: false });
+
+        tick(0);
+    }
+
+    function setSize() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        svg.setAttribute('width', width);
+        svg.setAttribute('height', height);
+    }
+
+    function setLines() {
+        svg.innerHTML = '';
+        lines = [];
+        paths = [];
+
+        const xGap = 15;
+        const yGap = 30;
+
+        const oWidth = width + 200;
+        const oHeight = height + 200;
+
+        const totalLines = Math.ceil(oWidth / xGap);
+        const totalPoints = Math.ceil(oHeight / yGap);
+
+        const xStart = (width - xGap * totalLines) / 2;
+        const yStart = (height - yGap * totalPoints) / 2;
+
+        for (let i = 0; i < totalLines; i++) {
+            const points = [];
+            for (let j = 0; j < totalPoints; j++) {
+                points.push({
+                    x: xStart + xGap * i,
+                    y: yStart + yGap * j,
+                    wave: { x: 0, y: 0 },
+                    cursor: { x: 0, y: 0, vx: 0, vy: 0 }
+                });
+            }
+
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.classList.add('js-line');
+            svg.appendChild(path);
+
+            lines.push(points);
+            paths.push(path);
+        }
+    }
+
+    function onResize() {
+        setSize();
+        setLines();
+    }
+
+    function onMouseMove(e) {
+        updateMousePosition(e.pageX, e.pageY);
+    }
+
+    function onTouchMove(e) {
+        e.preventDefault();
+        const touch = e.touches[0];
+        updateMousePosition(touch.clientX, touch.clientY);
+    }
+
+    function updateMousePosition(x, y) {
+        mouse.x = x;
+        mouse.y = y;
+
+        if (!mouse.set) {
+            mouse.sx = mouse.x;
+            mouse.sy = mouse.y;
+            mouse.lx = mouse.x;
+            mouse.ly = mouse.y;
+            mouse.set = true;
+            pointerDot.style.opacity = 1;
+        }
+    }
+
+    // Limit how often we spawn to prevent chaos
+    let lastSpawn = 0;
+
+    function spawnProjectile() {
+        const now = Date.now();
+        // Only spawn if moving fast AND 50ms has passed since last spawn
+        if (mouse.vs > 4 && now - lastSpawn > 50) {
+            lastSpawn = now;
+            projectiles.push({
+                x: mouse.sx,
+                y: mouse.sy,
+                vx: Math.cos(mouse.a) * (mouse.vs * 1.2), // Speed of the wave
+                vy: Math.sin(mouse.a) * (mouse.vs * 1.2),
+                life: 1.0,
+                // CHANGED: Increased radius so the "perpendicular" width is wider
+                radius: Math.max(150, mouse.vs * 3)
+            });
+        }
+    }
+
+    function movePoints(time) {
+        lines.forEach(points => {
+            points.forEach(p => {
+                // Background Noise
+                const move = noise2D(
+                    (p.x + time * 0.0002) * 0.003,
+                    (p.y + time * 0.0001) * 0.002
+                ) * 12;
+                p.wave.x = Math.cos(move) * 6;
+                p.wave.y = Math.sin(move) * 4;
+
+                // Projectile Interaction
+                projectiles.forEach(proj => {
+                    const dx = p.x - proj.x;
+                    const dy = p.y - proj.y;
+                    const d = Math.hypot(dx, dy);
+                    const l = proj.radius;
+
+                    if (d < l) {
+                        const s = 1 - d / l;
+                        const f = Math.cos(d * 0.001) * s;
+
+                        const projAngle = Math.atan2(proj.vy, proj.vx);
+
+                        // CHANGED: Reduced amplitude multiplier from 5 to 1.5
+                        p.cursor.vx += Math.cos(projAngle) * f * 1;
+                        p.cursor.vy += Math.sin(projAngle) * f * 1;
+                    }
+                });
+
+                // Spring Physics
+                p.cursor.vx += (0 - p.cursor.x) * 0.005;
+                p.cursor.vy += (0 - p.cursor.y) * 0.005;
+
+                // CHANGED: Less friction (0.92 -> 0.96) so lines oscillate longer
+                p.cursor.vx *= 0.92;
+                p.cursor.vy *= 0.92;
+
+                p.cursor.x += p.cursor.vx;
+                p.cursor.y += p.cursor.vy;
+            });
+        });
+    }
+
+    function drawLines() {
+        lines.forEach((points, i) => {
+            let d = '';
+            points.forEach((p, index) => {
+                const x = p.x + p.wave.x + p.cursor.x;
+                const y = p.y + p.wave.y + p.cursor.y;
+                if (index === 0) d += `M ${x} ${y}`;
+                else d += `L ${x} ${y}`;
+            });
+            paths[i].setAttribute('d', d);
+        });
+    }
+
+    function tick(time) {
+        mouse.sx += (mouse.x - mouse.sx) * 0.1;
+        mouse.sy += (mouse.y - mouse.sy) * 0.1;
+
+        const dx = mouse.x - mouse.lx;
+        const dy = mouse.y - mouse.ly;
+        const d = Math.hypot(dx, dy);
+
+        mouse.v = d;
+        mouse.vs += (d - mouse.vs) * 0.1;
+        mouse.vs = Math.min(100, mouse.vs);
+
+        mouse.lx = mouse.x;
+        mouse.ly = mouse.y;
+        mouse.a = Math.atan2(dy, dx);
+
+        pointerDot.style.transform = `translate3d(${mouse.sx}px, ${mouse.sy}px, 0) translate(-50%, -50%)`;
+
+        spawnProjectile();
+
+        // Update Projectiles
+        for (let i = projectiles.length - 1; i >= 0; i--) {
+            const p = projectiles[i];
+
+            p.x += p.vx;
+            p.y += p.vy;
+
+            // CHANGED: Less dampening (0.96 -> 0.999) so it shoots further
+            p.vx *= 1;
+            p.vy *= 1;
+
+            p.life -= 0.0025; // Slower fade out
+
+            const speed = Math.hypot(p.vx, p.vy);
+            if (speed < 0.1 || p.life <= 0) {
+                projectiles.splice(i, 1);
+            }
+        }
+
+        if (projectiles.length > 20) {
+            projectiles.shift();
+        }
+
+        movePoints(time);
+        drawLines();
+        requestAnimationFrame(tick);
+    }
+
+    init();
+</script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="centered-justified">
+    <p>Calculate the area and perimeter of a rectangle</p>
+    <!--Rectangle form-->
+    <form action="{{ url_for('rectangle') }}" method="POST">
+        {{ form.hidden_tag() }}
+
+        <div class="form-group">
+            {{ form.length.label }}
+            {{ form.length(class="form-control") }}
+            {% if form.length.errors %}
+                <div class="error">
+                    {% for error in form.length.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.width.label }}
+            {{ form.width(class="form-control") }}
+            {% if form.width.errors %}
+                <div class="error">
+                    {% for error in form.width.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-buttons">
+            {{ form.area(class="btn btn-primary") }}
+            {{ form.perimeter(class="btn btn-secondary") }}
+        </div>
+    </form>
+
+    {% if area is not none %}
+        <div class="result">
+            <h3>Area: {{ area }}</h3>
+        </div>
+    {% endif %}
+
+    {% if perimeter is not none %}
+        <div class="result">
+            <h3>Perimeter: {{ perimeter }}</h3>
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}
