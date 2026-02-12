@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="admin-container">
+    <h2>Admin Dashboard</h2>
+    <p class="admin-subtitle">Welcome, {{ session.username }}! Manage user accounts below.</p>
+
+    <div class="table-container">
+        <table class="user-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                <tr class="{% if not u.is_active %}inactive-user{% endif %}">
+                    <td>{{ u.id }}</td>
+                    <td>
+                        {{ u.username }}
+                        {% if u.id == session.user_id %}
+                            <span class="badge badge-you">(You)</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ u.email if u.email else 'N/A' }}</td>
+                    <td>
+                        <span class="badge badge-{{ u.role }}">{{ u.role }}</span>
+                    </td>
+                    <td>
+                        {% if u.is_active %}
+                            <span class="status-active">Active</span>
+                        {% else %}
+                            <span class="status-inactive">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ u.created_at.strftime('%Y-%m-%d') }}</td>
+                    <td class="action-buttons">
+                        {% if u.id != session.user_id %}
+                            <form action="{{ url_for('toggle_user', user_id=u.id) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-sm btn-warning">
+                                    {% if u.is_active %}Deactivate{% else %}Activate{% endif %}
+                                </button>
+                            </form>
+
+                            <form action="{{ url_for('delete_user', user_id=u.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete user {{ u.username }}? This action cannot be undone.');">
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="admin-stats">
+        <p><strong>Total Users:</strong> {{ users|length }}</p>
+        <p><strong>Active Users:</strong> {{ users|selectattr('is_active')|list|length }}</p>
+        <p><strong>Admins:</strong> {{ users|selectattr('role', 'equalto', 'admin')|list|length }}</p>
+    </div>
+</div>
+{% endblock %}

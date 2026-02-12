@@ -2,20 +2,19 @@
 :root {
     --primary-color: #2c3e50;    /* Dark Slate Blue */
     --accent-color: #3498db;     /* Bright Blue */
-
     /* CHANGED: Background to black for the Wave effect */
     --bg-color: #000000;
-
     --text-color: #333333;       /* Dark Gray Text */
     --white: #ffffff;
+    --success: #27ae60;
+    --danger: #e74c3c;
+    --warning: #f39c12;
+    --info: #3498db;
 }
-
 * {
     box-sizing: border-box;
 }
-
 /* Update this section in your style.css */
-
 /* 1. Global Reset & Variables */
 html, body {  /* <--- CHANGED: Added 'html' here */
     height: 100%;
@@ -26,27 +25,22 @@ html, body {  /* <--- CHANGED: Added 'html' here */
     color: var(--text-color);
     line-height: 1.6;
 }
-
 .page-wrapper {
     max-width: 900px;
     margin: 40px auto;
-
     /* CHANGED: Dark semi-transparent background so waves show through */
     background-color: rgba(20, 20, 20, 0.85);
     backdrop-filter: blur(8px); /* Adds that nice "frosted glass" blur */
     -webkit-backdrop-filter: blur(8px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: var(--white); /* Make text white so it's readable */
-
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     border-radius: 8px;
     overflow: hidden;
     min-height: 80vh;
-
     position: relative;
     z-index: 10;
 }
-
 /* 3. Header Styling */
 header {
     background-color: var(--primary-color);
@@ -54,26 +48,22 @@ header {
     padding: 2rem;
     text-align: center;
 }
-
 header h1 {
     margin: 0;
     font-size: 2.5rem;
     letter-spacing: 1px;
 }
-
 header h3 {
     margin: 0.5rem 0 1.5rem 0;
     font-weight: 300;
     font-size: 1.1rem;
     opacity: 0.9;
 }
-
 /* 4. Navigation Bar */
 nav {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     padding-top: 1rem;
 }
-
 .navbar {
     list-style: none;
     padding: 0;
@@ -81,8 +71,8 @@ nav {
     display: flex;
     justify-content: center;
     gap: 20px;
+    flex-wrap: wrap;
 }
-
 .navbar li a {
     color: var(--white);
     text-decoration: none;
@@ -91,23 +81,19 @@ nav {
     border-radius: 4px;
     transition: background-color 0.3s ease;
 }
-
 .navbar li a:hover {
     background-color: rgba(255, 255, 255, 0.1);
     color: var(--accent-color);
 }
-
 /* Style the 'active' class used in your Jinja template */
 .navbar li.active a {
     background-color: var(--accent-color);
     color: var(--white);
 }
-
 /* 5. Main Content Area */
 main {
     padding: 3rem 2rem;
 }
-
 /* 6. Specific Utility Classes */
 .centered-justified {
     max-width: 600px;
@@ -116,7 +102,6 @@ main {
     font-size: 1.1rem;
     color: #555;
 }
-
 /* 7. Image Styling */
 .profile-img {
     display: block;
@@ -127,8 +112,329 @@ main {
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
-/* --- WAVE ANIMATION STYLES (NEW) --- */
+/* --- FLASH MESSAGES --- */
+.flash-messages {
+    margin-bottom: 2rem;
+}
 
+.alert {
+    padding: 1rem 1.5rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+    position: relative;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.alert-success {
+    background-color: rgba(39, 174, 96, 0.2);
+    border-left: 4px solid var(--success);
+    color: #a8e6cf;
+}
+
+.alert-danger {
+    background-color: rgba(231, 76, 60, 0.2);
+    border-left: 4px solid var(--danger);
+    color: #ffb3ba;
+}
+
+.alert-warning {
+    background-color: rgba(243, 156, 18, 0.2);
+    border-left: 4px solid var(--warning);
+    color: #ffd89b;
+}
+
+.alert-info {
+    background-color: rgba(52, 152, 219, 0.2);
+    border-left: 4px solid var(--info);
+    color: #a0c4ff;
+}
+
+.close-alert {
+    position: absolute;
+    top: 50%;
+    right: 1rem;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.close-alert:hover {
+    opacity: 1;
+}
+
+/* --- AUTHENTICATION FORMS --- */
+.auth-container {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.auth-container h2 {
+    color: var(--white);
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.auth-form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.auth-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--white);
+    font-weight: 500;
+}
+
+.auth-form .form-control {
+    width: 100%;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    color: white;
+    font-size: 1rem;
+}
+
+.auth-form .form-control:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.form-hint {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.error {
+    color: #ffb3ba;
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+}
+
+.auth-link {
+    text-align: center;
+    margin-top: 2rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.auth-link a {
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+.auth-link a:hover {
+    text-decoration: underline;
+}
+
+/* --- ADMIN DASHBOARD --- */
+.admin-container {
+    max-width: 100%;
+}
+
+.admin-container h2 {
+    color: var(--white);
+    margin-bottom: 0.5rem;
+}
+
+.admin-subtitle {
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 2rem;
+}
+
+.table-container {
+    overflow-x: auto;
+    margin-bottom: 2rem;
+}
+
+.user-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.user-table thead {
+    background-color: var(--primary-color);
+}
+
+.user-table th {
+    padding: 1rem;
+    text-align: left;
+    color: var(--white);
+    font-weight: 600;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.user-table td {
+    padding: 0.75rem 1rem;
+    color: var(--white);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.user-table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.user-table tbody tr.inactive-user {
+    opacity: 0.6;
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.badge-admin {
+    background-color: rgba(231, 76, 60, 0.3);
+    color: #ffb3ba;
+}
+
+.badge-user {
+    background-color: rgba(52, 152, 219, 0.3);
+    color: #a0c4ff;
+}
+
+.badge-you {
+    background-color: rgba(243, 156, 18, 0.3);
+    color: #ffd89b;
+}
+
+.status-active {
+    color: #a8e6cf;
+}
+
+.status-inactive {
+    color: #ffb3ba;
+}
+
+.action-buttons {
+    white-space: nowrap;
+}
+
+.text-muted {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.admin-stats {
+    padding: 1.5rem;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    color: var(--white);
+}
+
+.admin-stats p {
+    margin: 0.5rem 0;
+}
+
+/* --- BUTTONS --- */
+.form-buttons {
+    margin-top: 1.5rem;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s;
+    font-weight: 500;
+}
+
+.btn-primary {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #2980b9;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-secondary {
+    background-color: #95a5a6;
+    color: white;
+    margin-right: 10px;
+}
+
+.btn-secondary:hover {
+    background-color: #7f8c8d;
+}
+
+.btn-sm {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+    margin-right: 0.5rem;
+}
+
+.btn-warning {
+    background-color: var(--warning);
+    color: white;
+}
+
+.btn-warning:hover {
+    background-color: #e67e22;
+}
+
+.btn-danger {
+    background-color: var(--danger);
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #c0392b;
+}
+
+/* --- RECTANGLE FORM (existing) --- */
+input.form-control {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    color: white;
+    font-size: 1rem;
+}
+
+input.form-control:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* --- WAVE ANIMATION STYLES (NEW) --- */
 /* The fixed container behind everything */
 #wave-background-container {
     position: fixed;
@@ -140,14 +446,12 @@ main {
     pointer-events: none; /* Allows clicking through to links if necessary */
     overflow: hidden;
 }
-
 /* The SVG lines generated by JS */
 .js-line {
     fill: none;
     stroke: #ffffff; /* White lines */
     stroke-width: 1;
 }
-
 /* The small dot that follows the mouse */
 .pointer-dot {
     position: absolute;
@@ -160,16 +464,13 @@ main {
     transition: opacity 0.3s;
     z-index: 1;
 }
-
 /* --- OLD SHOOTING STAR THEME (Optional, keeping for reference) --- */
-
 body.dark-mode {
     background-color: #0f0c29;
     background-image: linear-gradient(315deg, #0f0c29 0%, #302b63 74%, #24243e 100%);
     color: white;
     overflow-x: hidden;
 }
-
 #star-container {
     position: fixed;
     top: 0;
@@ -179,7 +480,6 @@ body.dark-mode {
     z-index: 0;
     pointer-events: none;
 }
-
 .glass-panel {
     position: relative;
     z-index: 10;
@@ -195,6 +495,177 @@ body.dark-mode {
     text-align: center;
 }
 
+/* Wrapper for the specific page content */
+.weather-page {
+    padding: 1rem;
+    text-align: center;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.weather-title {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--white);
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.weather-subtitle {
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 2.5rem;
+    font-size: 1.1rem;
+}
+
+/* The Glass Card Container */
+.weather-card {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 2.5rem;
+    background-color: rgba(255, 255, 255, 0.03); /* Subtle contrast against page wrapper */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+/* Form Styling */
+.weather-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.weather-label {
+    text-align: left;
+    font-weight: 600;
+    color: var(--accent-color);
+    margin-bottom: -5px; /* Pull label closer to input */
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.weather-input {
+    width: 100%;
+    padding: 12px 15px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    color: var(--white);
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+}
+
+.weather-input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    background-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+}
+
+.weather-input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.weather-button {
+    margin-top: 10px;
+    padding: 12px;
+    background-color: var(--accent-color);
+    color: var(--white);
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.weather-button:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+}
+
+.weather-button:active {
+    transform: translateY(0);
+}
+
+/* Error Message */
+.weather-error {
+    margin-top: 1.5rem;
+    padding: 10px;
+    background-color: rgba(231, 76, 60, 0.2);
+    border-left: 3px solid var(--danger);
+    color: #ffb3ba;
+    border-radius: 4px;
+    font-size: 0.95rem;
+}
+
+/* Results Section */
+.weather-results {
+    margin-top: 2.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 2rem;
+    animation: slideUp 0.4s ease-out;
+}
+
+.weather-results-title {
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    color: var(--white);
+}
+
+/* Grid Layout for Stats */
+.weather-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 columns */
+    gap: 15px;
+}
+
+.weather-stat {
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: background-color 0.3s;
+}
+
+.weather-stat:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.weather-stat-label {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+
+.weather-stat-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--accent-color);
+}
+
+/* Animation Keyframes */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Mobile Responsiveness for Weather Page */
+@media (max-width: 600px) {
+    .weather-grid {
+        grid-template-columns: 1fr; /* Stack stats on mobile */
+    }
+
+    .weather-title {
+        font-size: 2rem;
+    }
+}
 /* 8. Responsive Adjustments */
 @media (max-width: 600px) {
     .page-wrapper {
@@ -202,55 +673,21 @@ body.dark-mode {
         border-radius: 0;
         box-shadow: none;
     }
-
     header h1 {
         font-size: 1.8rem;
     }
-}
-/* 9. Form Styling (Add this to the bottom of your CSS) */
-/* This ensures the input boxes in rectangle.html look good on the dark card */
-input.form-control {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    margin-bottom: 15px;
-    background-color: rgba(255, 255, 255, 0.05); /* Subtle transparent white */
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 4px;
-    color: white; /* White text when typing */
-    font-size: 1rem;
-}
 
-input.form-control:focus {
-    outline: none;
-    border-color: var(--accent-color);
-    background-color: rgba(255, 255, 255, 0.1);
-}
+    .navbar {
+        flex-direction: column;
+        gap: 10px;
+    }
 
-.form-buttons .btn {
-    padding: 10px 20px;
-    margin-right: 10px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background 0.3s;
-}
+    .user-table {
+        font-size: 0.85rem;
+    }
 
-.btn-primary {
-    background-color: var(--accent-color);
-    color: white;
-}
-
-.btn-primary:hover {
-    background-color: #2980b9;
-}
-
-.btn-secondary {
-    background-color: #95a5a6;
-    color: white;
-}
-
-.btn-secondary:hover {
-    background-color: #7f8c8d;
+    .user-table th,
+    .user-table td {
+        padding: 0.5rem;
+    }
 }
